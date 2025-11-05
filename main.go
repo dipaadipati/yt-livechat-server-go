@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -9,6 +10,7 @@ import (
 
 var ws_addr = flag.String("ws_addr", ":8080", "websocket service address")
 var http_addr = flag.String("http_addr", ":3000", "http service address")
+var video_id = flag.String("video_id", "YOUR_VIDEO_ID", "YouTube video ID to scrape live chat from")
 
 func servEmojisApi(w http.ResponseWriter, r *http.Request) {
 	fileInfos, err := os.ReadDir("./emojis")
@@ -55,6 +57,24 @@ func servEmojis(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	flag.Parse()
+
+	if isWebView2RuntimeInstalled() {
+		if *video_id == "YOUR_VIDEO_ID" {
+			fmt.Print("Masukkan YouTube Video ID: ")
+			_, err := fmt.Scanf("%s", video_id)
+			if err != nil {
+				log.Fatal("Gagal membaca Video ID:", err)
+			}
+
+			// Start YouTube automation in background
+			go runHeadlessYouTube("https://www.youtube.com/live_chat?is_popout=1&v=" + *video_id)
+		} else {
+			// Jika video_id sudah diisi lewat flag, jalankan langsung
+			go runHeadlessYouTube("https://www.youtube.com/live_chat?is_popout=1&v=" + *video_id)
+		}
+	} else {
+		fmt.Println("Menggunakan Tampermonkey runtime. Pastikan script Tampermonkey sudah terpasang di browser.")
+	}
 
 	hub := newHub()
 	go hub.run()

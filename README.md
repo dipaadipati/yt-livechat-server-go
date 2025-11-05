@@ -15,6 +15,7 @@ Golang port dari aplikasi untuk scrape YouTube Live Chat secara real-time dan me
 ## 🛠️ Requirement
 
 - **Go** v1.20+ (download dari https://go.dev/)
+- **Microsoft Edge WebView2 Runtime** (biasanya sudah terinstall di Windows 10/11)
 - **Tampermonkey** browser extension (Chrome, Firefox, dll)
 
 ## 📦 Installation
@@ -32,12 +33,12 @@ cd yt-livechat-server-go
 go mod tidy
 ```
 
-### 2. Install Tampermonkey
+### 2. Install Tampermonkey (Jika tanpa WebView2)
 
 - **Chrome**: https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo
 - **Firefox**: https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/
 
-### 3. Setup Tampermonkey Script
+### 3. Setup Tampermonkey Script (Jika tanpa WebView2)
 
 1. Buka extension Tampermonkey di browser
 2. Klik **Create a new script**
@@ -50,14 +51,16 @@ go mod tidy
 
 ```bash
 go run .
+# atau "go run . -video_id=VIDEO_ID" jika menggunakan WebView2
 ```
 
 Output yang benar:
 ```
+Masukkan YouTube Video ID: VIDEO_ID_INPUT
 Starting http server on http://localhost:3000
 ```
 
-### Step 2: Buka YouTube Live Chat
+### Step 2: Buka YouTube Live Chat (Jika tanpa WebView2)
 
 1. Buka YouTube Live Chat di tab browser
 2. Pastikan Tampermonkey script sudah aktif
@@ -84,6 +87,7 @@ Starting http server on http://localhost:3000
 │ yt-livechat-server-go
 ├── main.go                # Main WebSocket + HTTP server
 ├── client.go              # WebSocket client handling
+├── browser.go             # Headless YouTube Browser
 ├── hub.go                 # WebSocket hub for broadcasting
 ├── tampermonkey_script.js # Script untuk scrape YouTube
 ├── public/
@@ -149,6 +153,9 @@ WS ws://localhost:8080/
 ```
 
 ## 📝 Changelog
+
+### v2.0
+- Add headless browser system without use any active browser tabs
 
 ### v1.0
 - Initial release Go version
