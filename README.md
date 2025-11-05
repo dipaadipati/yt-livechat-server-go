@@ -154,6 +154,9 @@ WS ws://localhost:8080/
 
 ## 📝 Changelog
 
+### v2.1
+- Hide windows browser application
+
 ### v2.0
 - Add headless browser system without use any active browser tabs
 

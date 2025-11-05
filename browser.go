@@ -4,9 +4,24 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"syscall"
 
 	"github.com/jchv/go-webview2"
 )
+
+var (
+	user32         = syscall.NewLazyDLL("user32.dll")
+	procShowWindow = user32.NewProc("ShowWindow")
+)
+
+const (
+	SW_HIDE = 0
+	SW_SHOW = 5
+)
+
+func ShowWindow(hwnd uintptr, cmd int) {
+	procShowWindow.Call(hwnd, uintptr(cmd))
+}
 
 func isWebView2RuntimeInstalled() bool {
 	if os.Getenv("OS") != "Windows_NT" {
@@ -40,6 +55,12 @@ func runHeadlessYouTube(youtubeURL string) {
 		log.Printf("Received from YouTube: %s", message)
 		// Di sini bisa diteruskan ke websocket hub
 	})
+
+	// Ambil HWND dari webview
+	hwnd := uintptr(w.Window())
+
+	// Sembunyikan window
+	ShowWindow(hwnd, SW_HIDE)
 
 	w.Navigate(youtubeURL)
 
